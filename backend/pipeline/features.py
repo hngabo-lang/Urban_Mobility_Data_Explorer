@@ -1,11 +1,10 @@
 import sys
 from pathlib import Path
 
-from numpy import add
 import pandas as pd 
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from backend.api import trips
+
 from pipeline.load import load_trips, load_zone_lookup
 from pipeline.clean import clean_trips, clean_zone_lookup
 from pipeline.logger import RecordLogger
@@ -29,7 +28,8 @@ def add_features(df,zones):
  df["avg_speed_mph"] = (df["trip_distance"] / (df["trip_duration_min"] / 60)).round(2)
  
  #3 fare per mile: show high price changes with trip length
- df["fare_per_mile"] = (df["fare_amount"] / df["trip_distance"]).round(2)
+ long_enough = df["trip_distance"] >= 0.5
+ df["fare_per_mile"] = (df["fare_amount"] / df["trip_distance"]).round(2).where(long_enough)
  
  #4 trip percentage (card payment only: cash tips are not recorded) 
  is_card = df["payment_type"] == 1
