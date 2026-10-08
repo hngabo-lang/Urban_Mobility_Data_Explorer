@@ -15,7 +15,7 @@ ZONE_SPATIAL_FILE = RAW_DIR / "taxi_zones.shp"
 SAMPLE_ROWS = 500_000
 
 # databse 
-DB_PATH = BASE_DIR / "backend" / "taxi.db"
+DB_PATH = BASE_DIR / "backend" / "database" / "mobility_data.db"
 
 # output
 EXCLUDED_LOG = LOGS_DIR / "excluding_records.csv"
