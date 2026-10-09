@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mpbilty_data.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "mobilty_data.db")
 SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.sql")
 
 def init_db():
