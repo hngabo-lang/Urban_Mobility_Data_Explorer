@@ -61,7 +61,7 @@ def clean_zone_lookup(lookup):
     })
 
     for col in ["borough", "zone", "service_zone"]:
-        lookup[col] = lookup[col].fillna("UNKNOWN").str.strip()
+        lookup[col] = lookup[col].fillna("Unknown").str.strip()
     return lookup
 
 def clean_trips(df, valid_zone_ids, logger):

@@ -1,51 +1,117 @@
-import sqlite3
-import os
-import pandas as pd
+import json
 import sys 
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-from pipeline.load import load_trips, load_zone_lookup
+import config
+from database.db import get_connection, init_db
+from pipeline.load import load_trips, load_zone_lookup, load_zone_shapes
 from pipeline.clean import clean_trips, clean_zone_lookup
 from pipeline.features import add_features 
+from pipeline.logger import RecordLogger
 
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mobility_data.db")
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw")
+# columns in the trips table
 
-class DataCleaningLogger:
-    def log(self, df, reason, action):
-        pass
+
+BOOL_COLUMNS = ["is_weekend", "is_airport_trip", "is_cross_borough"]
+TRIP_COLUMNS = [
+    "vendor_id", "rate_code_id", "payment_type_id",
+    "pu_location_id", "do_location_id",
+    "pickup_datetime", "dropoff_datetime",
+    "passenger_count", "trip_distance", "store_and_fwd_flag",
+    "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount",
+    "improvement_surcharge", "congestion_surcharge", "total_amount",
+    "trip_duration_min", "avg_speed_mph", "fare_per_mile", "tip_pct",
+    "pickup_hour", "pickup_weekday", "is_weekend", "time_of_day",
+    "is_airport_trip", "is_cross_borough",
+]
+
+# insert each borough once
+
+def insert_boroughs(conn, zones):
+    names = sorted(zones["borough"].unique())
+    conn.executemany(
+        "INSERT INTO boroughs (borough_name) VALUES (?)",
+        [(name,) for name in names],
+         )
+    
+    rows = conn.execute("SELECT borough_id, borough_name FROM boroughs")
+    return {row["borough_name"]: row["borough_id"] for row in rows}
+
+def insert_zones(conn, zones, borough_ids):
+    rows = [
+        (int(z.location_id), z.zone, borough_ids[z.borough], z.service_zone)
+        for z in zones.itertuples()
+    ]
+    conn.executemany(
+        "INSERT INTO zones (location_id, zone_name, borough_id, service_zone) "
+        "VALUES (?, ?, ?, ?)",
+        rows,
+    )
+
+# Store each polygon as GeoJSON text 
+def insert_zone_shapes(conn, shapes):
+    shapes = shapes[["LocationID", "geometry"]].copy()
+    shapes["geometry"] = shapes.geometry.simplify(0.0001)
+    rows = [
+        (int(s.LocationID), json.dumps(s.geometry.__geo_interface__))
+        for s in shapes.itertuples()
+    ]
+    conn.executemany(
+        "INSERT INTO zone_shapes (location_id, geojson) VALUES (?, ?)",
+        rows,
+    )
+
+    # match dataframe to trips table
+ 
+def prepare_trips(trips):
+    df = trips.rename(columns={"payment_type" : "payment_type_id"})
+    for col in ["pickup_datetime", "dropoff_datetime"]:
+        df[col] = df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
+    for col in BOOL_COLUMNS:
+        df[col] = df[col].astype(int)
+    return df[TRIP_COLUMNS]
+
+def insert_trips(conn,trips):
+    trips.to_sql("trips", conn, if_exists= "append", index = False, chunksize=50_000)
+
 def populate_database():
-    conn = sqlite3.connect(DB_PATH)
+    logger = RecordLogger()
 
-    zones_raw = load_zone_lookup()
-    zones_clean = clean_zone_lookup(zones_raw)
-    zones_clean.rename(columns={
-        'locationID': 'location_id',
-        'Borough': 'borough',
-        'Zone': 'zone',
-        'service_zone': 'service_zone' 
-    }, inplace=True)
-    zones_clean.to_sql('taxi_zones', conn, if_exists='replace', index=False)
+    print("Loading, cleaning and adding features...")
+    zones = clean_zone_lookup(load_zone_lookup())
+    trips = clean_trips(load_trips(), set(zones["location_id"]), logger)
+    trips = add_features(trips, zones)
+    shapes = load_zone_shapes()
 
-    trips_raw = load_trips()
-    valid_zone_ids = set(zones_raw['LocationID'])
-    logger = DataCleaningLogger()
-    trips_clean = clean_trips(trips_raw, valid_zone_ids, logger)
-    trips_featured = add_features(trips_clean, zones_clean)
+    print("Resetting database")
+    init_db()
 
-    trips_featured.rename(columns={
-        'PUlocationID': 'pu_location_id',
-         'DOlocationID': 'do_location_id',
-         'RatecodeID': 'vendor_id',
-   }, inplace=True)
+    conn = get_connection()
+    try:
+        print("Inserting boroughs and zones .... ")
+        borough_ids = insert_boroughs(conn, zones)
+        insert_zones(conn, zones, borough_ids)
+        insert_zone_shapes(conn, shapes)
 
-    trips_featured.to_sql('trips', conn, if_exists='append', index=False)
+        print(f"Inserting {len(trips):,} trips ....")
+        insert_trips(conn, prepare_trips(trips))
+        conn.commit()
 
-    conn.commit()
-    conn.close()
+        for table in ["boroughs", "zones","zone_shapes", "trips"]:
+            count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            print(f"{table}: {count:,} rows")
+    finally:
+        conn.close()
+
+
+    logger.save()
+    print(f"Done. Database at {config.DB_PATH}")
+
 
 if __name__ == "__main__":
     populate_database()
+
+
+
