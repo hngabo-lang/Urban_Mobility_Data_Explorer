@@ -15,6 +15,15 @@ def get_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# run a select and return the rows as a list of dictionaries
+def query_all(sql, params=()):
+    conn = get_connection()
+    try:
+        rows = conn.execute(sql, params).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
 # create or reset all tables from schema.sql
 def init_db():
     schema_sql = SCHEMA_PATH.read_text(encoding="utf-8")
