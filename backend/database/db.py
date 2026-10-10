@@ -2,13 +2,8 @@ import sqlite3
 import sys
 from pathlib import Path
 
-<<<<<<< HEAD
-DB_PATH = os.path.join(os.path.dirname(__file__), "mobilty_data.db")
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.sql")
-=======
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 import config
->>>>>>> 4b9942557109ed65472caecc6a6cf79c6908c838
 
 SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
 
