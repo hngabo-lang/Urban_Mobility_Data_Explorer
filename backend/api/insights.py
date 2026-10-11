@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from database.db import query_all
+from algorithms.custom_algo import top_k
 
 insights_bp = Blueprint("insights", __name__, url_prefix="/api/insights")
 
@@ -63,10 +64,8 @@ def top_zones():
         JOIN zones z    ON z.location_id = t.pu_location_id
         JOIN boroughs b ON b.borough_id = z.borough_id
         GROUP BY z.location_id
-        ORDER BY trips DESC
-        LIMIT ?
-    """, [limit])
-    return jsonify(rows)
+    """)
+    return jsonify(top_k(rows, limit, key=lambda r: r["trips"]))
 
 @insights_bp.route("/zone-activity")
 def zone_activity():
