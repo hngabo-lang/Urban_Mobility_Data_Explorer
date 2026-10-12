@@ -1,12 +1,16 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from api.zones import zones_bp
+from api.trips import trips_bp
+from api.insights import insights_bp
 
 def create_app():
     app = Flask(__name__)
     CORS(app) # allow the frontend (a different address) to call this API
-    
+
+    app.register_blueprint(trips_bp)
     app.register_blueprint(zones_bp)
+    app.register_blueprint(insights_bp)
     
     @app.route("/api/health")
     def health():
