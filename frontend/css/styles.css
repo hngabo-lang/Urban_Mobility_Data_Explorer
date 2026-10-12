@@ -1,0 +1,373 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #1f2933;
+  --muted: #52606d;
+  --line: #d9dee4;
+  --accent: #1d4de8;
+  --accent-soft: #e8efff;
+  --dark: #1f2933;
+  --raduis: 10px;
+  --gap: 20px;
+  --shadow: 0 1px 3px rgba(31, 41, 51, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--bg);
+}
+
+h1,
+h2  {
+   margin: 0;
+   line-height: 1.2;
+}
+
+h2  {
+   font-size: 18px;
+   margin-bottom: 12px;
+}
+
+.site-header {
+  background: var(--dark);
+  color: #ffffff;
+  padding: 24px 32px;
+}
+
+.site-header h1 {
+  font-size: 26px;
+}
+
+.site-header p {
+    margin: 6px 0 0;
+    color: #cbd2d9;
+}
+
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 32px 48px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--raduis);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+}
+
+.card .label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.card .value {
+   display: block;
+   margin-top: 4px;
+   font-size: 24px;
+   font-weight: 700;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0; 
+}
+
+.filters {
+    position: sticky;
+    top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--raduis);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.filters label {
+    display:block;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.filters input,
+.filters select {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 10px;
+    font: inherit;
+    font-weight: 400;
+    color: var(--ink);
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+
+.filters input:focus,
+.filters select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.filters fieldset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 014px;
+    padding: 0;
+    border: none;
+}
+
+.filters legend {
+    grid-column: 1 / -1;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.filters fieldset input{
+    margin-top: 0;
+}
+
+.filters-buttons {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 10px;
+   margin-top: 6px;
+}
+
+button {
+   padding: 9px 14px;
+   font: inherit;
+   font-weight: 600;
+   color: var(--ink);
+   background: var(--surface);
+   border:   1px Solid var(--line);
+   border-radius: 6px;
+   cursor: pointer;
+}
+
+button:hover {
+    background: var(--bg);
+}
+
+button[type="submit"] {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+button[type="submit"]:hover {
+  background: #1e40af;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: repeat(2, mimmax(0, 1fr));
+    gap: var(--gap);
+}
+
+.chart-box {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--raduis);
+    padding: 16px;
+    box-shadow: var(--shadow);
+}
+
+.chart-box figcaption {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.chart-box canvas {
+    width: 100%;
+}
+
+.insight {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+}
+
+ .insight:empty {
+    display: none;
+ }
+ 
+.map-section,
+.trips-secction {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+#map {
+    height: 440px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+}
+
+.trips-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+#trips-count {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.table-wraps {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th,
+td {
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--line);
+}
+
+th {
+    position: sticky;
+    top: 0;
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--bg);
+}
+
+th[data-sort] {
+    cursor: pointer;
+    user-select: none;
+}
+
+th[data-sort]:hover {
+    color: var(--accent);
+}
+
+th.sort-asc::after {
+    content: " ▲";
+}
+
+th.sort-desc::after {
+    content: " ▼";
+}
+
+tbody tr {
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background: var(--accent-soft);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+#page-info {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+#trip-detail {
+    width: min(520px, 92vw);
+    padding: 24px;
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px rgba(31, 41, 51, 0.3);
+}
+
+#trip-detail::backdrop {
+    background: rgba(31, 41, 51, 0.5);
+}
+
+#trip-detail-body {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 16px;
+    margin: 16px 0 20px;
+}
+
+#trip-detail-body dd {
+    margin: 0;
+}
+
+@media (max-width: 1000px) {
+    .layout { 
+      grid-template-columns: 1fr;
+}
+
+.filters {
+    position:static;
+ }
+}
+
+@media (max-width: 700px) {
+    main {
+        padding: 16px;
+ }
+
+.site-header {
+    padding: 18px 16px;
+ }
+
+.charts {
+    grid-template-columns: 1fr;
+ }  
+
+  #map {
+    height: 320px;
+  }
+} 

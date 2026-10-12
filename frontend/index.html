@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYC Urban Mobility Explorer</title>
+
+   <!-- Leaflet (map) -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+   <!-- Our styles -->
+   <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <header class="site-header"></header>
+       <h1>NYC Urban Mobility Explorer</h1>
+       <p>Patterns in New York City yellow taxi trips, January 2019</p>
+    </header>
+
+   <main>
+     <!-- Summary cards -->
+     <section class="summary" aria-label="Key numbers">
+       <div class="card"><span class="label">Trips</span><span class="value" id="stat-total">–</span></div>
+       <div class="card"><span class="label">Average fare</span><span class="value" id="stat-fare">–</span></div>
+       <div class="card"><span class="label">Average distance</span><span class="value" id="stat-distance">–</span></div>
+       <div class="card"><span class="label">Average duration</span><span class="value" id="stat-duration">–</span></div>
+       <div class="card"><span class="label">Average speed</span><span class="value" id="stat-speed">–</span></div>
+       <div class="card"><span class="label">Airport trips</span><span class="value" id="stat-airport">–</span></div>
+       <div class="card"><span class="label">Cross-borough</span><span class="value" id="stat-cross">–</span></div>
+    </section>
+
+        <div class="layout">
+          <!-- Filters sidebar -->
+          <aside class="filters" aria-label="Trip filters">
+            <h2>Filter trips</h2>
+            <form id="filter-form">
+            <label>From date
+              <input type="date" name="start_date" min="2019-01-01" max="2019-01-31">
+            </label>
+            <label>To date
+              <input type="date" name="end_date" min="2019-01-01" max="2019-01-31">
+            </label>
+            <label>Pickup hour
+            <select name="hour" id="filter-hour">
+                 <option value="">Any hour</option>
+            </select>
+            </label>
+          <label>Time of day
+            <select name="time_of_day">
+              <option value="">Any</option>
+              <option value="night">Night (0–6)</option>
+              <option value="morning_rush">Morning rush (6–10)</option>
+              <option value="midday">Midday (10–16)</option>
+              <option value="evening_rush">Evening rush (16–20)</option>
+              <option value="evening">Evening (20–24)</option>
+            </select>
+             </label>
+          <label>Pickup borough
+          <select name="borough" id="filter-borough">
+              <option value="">Any borough</option>
+              </select>
+          </label>
+          <fieldset>
+            <legend>Distance (miles)</legend>
+            <input type="number" name="min_distance" placeholder="Min" min="0" step="0.1">
+            <input type="number" name="max_distance" placeholder="Max" min="0" step="0.1">
+          </fieldset>
+          <fieldset>
+            <legend>Fare ($)</legend>
+            <input type="number" name="min_fare" placeholder="Min" min="0" step="1">
+            <input type="number" name="max_fare" placeholder="Max" min="0" step="1">
+          </fieldset>
+          <label>Payment
+            <select name="payment_type">
+              <option value="">Any</option>
+              <option value="1">Credit card</option>
+              <option value="2">Cash</option>
+              <option value="3">No charge</option>
+              <option value="4">Dispute</option>
+            </select>
+            </label>
+          <label>Airport trips
+            <select name="airport">
+              <option value="">All trips</option>
+              <option value="1">Airport only</option>
+              <option value="0">Non-airport only</option>
+              </select>
+          </label>
+          <div class="filter-buttons">
+            <button type="submit">Apply</button>
+              <button type="reset" id="filter-reset">Reset</button>
+          </div>
+        </form>
+      </aside>
+
+       <div class="content">
+        <!-- Charts -->
+          <section class="charts" aria-label="Charts">
+          <figure class="chart-box">
+            <figcaption>When does NYC ride? Trips and speed by hour</figcaption>
+            <canvas id="chart-hourly"></canvas>
+            <p class="insight" id="insight-hourly"></p>
+          </figure>
+           <figure class="chart-box">
+            <figcaption>Busiest pickup zones</figcaption>
+            <canvas id="chart-top-zones"></canvas>
+            <p class="insight" id="insight-top-zones"></p>
+          </figure>
+          <figure class="chart-box">
+            <figcaption>Trips by day of the week</figcaption>
+            <canvas id="chart-weekday"></canvas>
+            <p class="insight" id="insight-weekday"></p>
+          </figure>
+            <figure class="chart-box">
+            <figcaption>How riders pay, and how they tip</figcaption>
+            <canvas id="chart-payment"></canvas>
+            <p class="insight" id="insight-payment"></p>
+          </figure>
+        </section>
+
+         <!-- Map -->
+        <section class="map-section" aria-label="Pickup map">
+            <h2>Pickups by zone</h2>
+          <div id="map"></div>
+           </section>
+
+           <!-- Trips table -->
+        <section class="trips-section" aria-label="Trips">
+          <div class="trips-header">
+            <h2>Trips</h2>
+            <span id="trips-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table id="trips-table">
+              <thead>
+            <tr>
+                  <th data-sort="pickup_datetime">Pickup time</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th data-sort="trip_distance">Distance</th>
+                  <th data-sort="trip_duration_min">Duration</th>
+                  <th data-sort="fare_amount">Fare</th>
+                  <th data-sort="tip_pct">Tip %</th>
+                  <th data-sort="total_amount">Total</th>
+        </tr>
+              </thead>
+              <tbody id="trips-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <button id="prev-page" type="button">Previous</button>
+            <span id="page-info"></span>
+            <button id="next-page" type="button">Next</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+    <!-- Trip detail popup -->
+   <dialog id="trip-detail">
+    <h2>Trip details</h2>
+    <dl id="trip-detail-body"></dl>
+    <button id="close-detail" type="button">Close</button>
+    </dialog>
+
+     <!-- Libraries -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  
+     <!-- Our code (order matters: api.js first, main.js last) -->
+      <script src="js/api.js"></script>
+      <script src="js/filters.js"></script>
+      <script src="js/charts.js"></script>
+      <script src="js/map.js"></script>
+      <script src="js/main.js"></script>
+ </body>
+ </html>
