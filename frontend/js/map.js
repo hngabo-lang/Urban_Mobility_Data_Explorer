@@ -1,4 +1,4 @@
-const MAP_SHADES = ["#fff3c4","#ffe08a", "#f7c948", "#f0a500", "#c27c00", "#8a5300" ]
+const MAP_SHADES = ["#fff3c4","#ffe08a", "#f7c948", "#f0a500", "#c27c00", "#8a5300" ];
 const NO_DATA_COLOR = "#e4ddd0";
 const NYC_CENTER = [40.7128, -74.006];
 
@@ -6,28 +6,30 @@ const map = {
     leaflet: null,
     layer: null,
     legend: null,
-}
-     Init() {
+
+    init() {
       if (this.leaflet) return; 
-      this.leaflet = L.map("map", { scrollWheelZoom: false }).setView(NYC_CENTER, 10);
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribute: "&copy; OpenStreetMap contributors &copy; CARTO",
-        subdomains: "abcd" ,
-        maxZoom: 18
-      }).addTo(this.leaflet);
+      this.leaflet = L.map("map", {
+        scrollWheelZoom: false,
+        maxBoundsViscosity: 1.0, // the edge of the allowed area is a solid wall
+      }).setView(NYC_CENTER, 10);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19,
+      }).addTo(this.leaflet); 
     },
 
-     colorFor(pickups, maxPickups) {
+    colorFor(pickups, maxPickups) {
         if (!pickups) return NO_DATA_COLOR;
-        const ratio = Math.log10(pickups + 1) 
+        const ratio = Math.log10(pickups + 1) / Math.log10(maxPickups + 1);
         const level = Math.floor(ratio * MAP_SHADES.length);
         return MAP_SHADES[Math.min(level, MAP_SHADES.length - 1)];
     },
 
-     popupFor(CSSFontFeatureValuesRule, pickups) {
+    popupFor(feature, pickups) {
         const box = document.createElement("div");
         const title = document.createElement("strong");
-        title.textContent = features.properties.zone;
+        title.textContent = feature.properties.zone;
         const details = document.createElement("div");
         details.textContent =
            `${feature.properties.borough} . ${formatNumber(pickups)} pickups`;
@@ -35,7 +37,7 @@ const map = {
         return box;
     },
 
-     draw(shapes, activity) {
+    draw(shapes, activity) {
         this.init();
     
         const pickupsByZone = {};
@@ -54,15 +56,18 @@ const map = {
                 color: "#ffffff",
                 weight: 0.6,
            }),
-           onEachFeatures: (feature, shape) => {
+           onEachFeature: (feature, shape) => {
                const pickups = pickupsByZone[feature.properties.location_id] || 0;
-               shape.bindPopup(this.popupfor(feature, pickups));
-               shape.on("mouseover", () => shape.setstyle({ color: "#141414", weight: 2}));
+               shape.bindPopup(this.popupFor(feature, pickups));
+               shape.on("mouseover", () => shape.setStyle({ color: "#141414", weight: 2}));
                shape.on("mouseout", () => this.layer.resetStyle(shape));
            },
         }).addTo(this.leaflet);
 
-        this.leaflet.fitBounds(this.layer.getBounds());
+        const bounds = this.layer.getBounds();
+        this.leaflet.fitBounds(bounds);
+        this.leaflet.setMaxBounds(bounds.pad(0.1));
+        this.leaflet.setMinZoom(this.leaflet.getZoom());
         this.addLegend(maxPickups);
     },
     
@@ -76,7 +81,7 @@ const map = {
              background: "#ffffff",
              padding: "8px 10px",
              borderRadius: "6px",
-             boxShadow: "0 1px 4px rgba(0, 0, 0.2)",
+             boxShadow: "0 1px 4px rgba(0, 0, 0, 0.2)",
              font: "12px system-ui, sans-serif",
              color: "#1c1c1c",           
         });
@@ -84,7 +89,7 @@ const map = {
         const title = document.createElement("div");
         title.textContent = "Pickups (log scale)";
         title.style.fontWeight = "600";
-        title.style.marginButton = "4px";
+        title.style.marginBottom = "4px";
 
         const bar = document.createElement("div");
         bar.style.display = "flex";

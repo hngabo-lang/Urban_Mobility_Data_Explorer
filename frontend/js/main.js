@@ -130,7 +130,7 @@ function renderTrips(trips) {
     } 
 
     for (const trip of trips) {
-        const row = document.createElement("tr")
+        const row = document.createElement("tr");
         const cells = [
             shortTime(trip.pickup_datetime),
             trip.pickup_zone,
@@ -245,7 +245,7 @@ async function showTrip(tripId) {
 
         }
     } catch (err){
-        list.textContent = `could load trip ${tripId}: ${err.message}`;
+        list.textContent = `could not load trip ${tripId}: ${err.message}`;
 
     }
     $("trip-detail").showModal();
