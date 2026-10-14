@@ -11,8 +11,8 @@ TRIPS_FILE = RAW_DIR / "yellow_tripdata_2019-01.csv"
 ZONE_LOOKUP_FILE = RAW_DIR / "taxi_zone_lookup.csv"
 ZONE_SPATIAL_FILE = RAW_DIR / "taxi_zones.shp"
 
-# quick testing
-SAMPLE_ROWS = 500_000
+# full data run
+SAMPLE_ROWS = None
 
 # databse 
 DB_PATH = BASE_DIR / "backend" / "database" / "mobility_data.db"
