@@ -2,8 +2,12 @@
 
 A fullstack application built on real world data: the NYC taxi and Limousine commision's **january 2019 yellow taxi trips** (7.6 million records). The raw data is cleaned with python pipeline, stored in a normalised **SQLITE** database, served by a **flask** API, and explored in an interactive **HTML/CSS/JS** dashboard with filtering, sorting and paging.
 
-- **Video Walkthrough:** 
-- **Team members/authors** Griphen Mweene, Aristote Henry Ngabo, Precious Amarachi Azubuike.
+- **Video Walkthrough:** (https://youtu.be/okYcFL6v8MA?si=4Hh8U3LwIQL9uLqA)
+
+- **Team members/authors:** -Griphen Mweene,
+                            -Aristote Henry Ngabo,
+                            -Precious Amarachi Azubuike.
+
 - **Team task sheet:** [Google Sheet](https://docs.google.com/spreadsheets/d/1I0N5eUctzWSUkwSLzQiU75zSHnxQZl7PzwDWK2OGUro/edit?usp=sharing)
 - **Technical_report:** [docs/technical_report.pdf](docs/technical_report.pdf)
 
