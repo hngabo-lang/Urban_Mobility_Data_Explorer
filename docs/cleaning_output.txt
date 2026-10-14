@@ -1,0 +1,67 @@
+
+ ======CLEANING SUMMARY======
+Reason                                  Action          Rows        %
+ 0 or missing passengers (set to 1)     fixed        114,741    1.50%
+trip under 1 minute                     excluded      67,755    0.88%
+ trip over 4 hours                      excluded      20,694    0.27%
+zero or negative distance               excluded      11,436    0.15%
+dropoff not after pickup                excluded       6,291    0.08%
+zero or negative fare                   excluded       4,954    0.06%
+pickup outside january 2019             excluded         537    0.01%
+speed over 80 mph                       excluded         482    0.01%
+negotiated fare below $2.50             suspicious       310    0.00%
+invalid rate code                       excluded         103    0.00%
+distance over 100 miles                 excluded          26    0.00%
+tolls over $100                         excluded          17    0.00%
+more than 6 passengers                  excluded          14    0.00%
+negative charge component               excluded           6    0.00%
+fare below $2.50 minimum                excluded           3    0.00%
+fare over $500                          excluded           1    0.00%
+
+ Total Excluded : 112,319 of 7,667,792
+(1.46%)
+
+ Clean rows : 7,555,473
+
+ Clean Column types:
+vendor_id                         int16
+pickup_datetime          datetime64[us]
+dropoff_datetime         datetime64[us]
+passenger_count                   int16
+trip_distance                   float64
+rate_code_id                      int16
+store_and_fwd_flag                  str
+pu_location_id                    int16
+do_location_id                    int16
+payment_type                      int16
+fare_amount                     float64
+extra                           float64
+mta_tax                         float64
+tip_amount                      float64
+tolls_amount                    float64
+improvement_surcharge           float64
+total_amount                    float64
+congestion_surcharge            float64
+dtype: object
+
+ Clean Numeric summary:
+                           count                        mean                  min                  25%                  50%                  75%                  max        std
+vendor_id              7555473.0                     1.63587                  1.0                  1.0                  2.0                  2.0                  4.0   0.540389
+pickup_datetime          7555473  2019-01-17 01:47:36.057063  2019-01-01 00:00:00  2019-01-09 17:48:27  2019-01-16 22:21:29  2019-01-24 19:17:07  2019-01-31 23:59:58        NaN
+dropoff_datetime         7555473  2019-01-17 02:00:33.410403  2019-01-01 00:01:33  2019-01-09 18:01:56  2019-01-16 22:33:30  2019-01-24 19:30:40  2019-02-01 00:55:49        NaN
+passenger_count        7555473.0                    1.583475                  1.0                  1.0                  1.0                  2.0                  6.0   1.211678
+trip_distance          7555473.0                    2.824074                 0.01                 0.92                 1.55                 2.82                98.38   3.705436
+rate_code_id           7555473.0                    1.044529                  1.0                  1.0                  1.0                  1.0                  6.0   0.327638
+pu_location_id         7555473.0                   165.46466                  1.0                129.0                162.0                234.0                265.0  66.317462
+do_location_id         7555473.0                  163.706629                  1.0                113.0                162.0                234.0                265.0  70.325695
+payment_type           7555473.0                    1.285218                  1.0                  1.0                  1.0                  2.0                  4.0   0.464012
+fare_amount            7555473.0                   12.156689                 0.01                  6.0                  9.0                 13.5                500.0  10.657084
+extra                  7555473.0                    0.328828                  0.0                  0.0                  0.0                  0.5                 18.5   0.463725
+mta_tax                7555473.0                    0.498535                  0.0                  0.5                  0.5                  0.5                  1.0   0.027022
+tip_amount             7555473.0                    1.819786                  0.0                  0.0                 1.45                 2.34               787.25   2.404754
+tolls_amount           7555473.0                    0.311937                  0.0                  0.0                  0.0                  0.0                 99.0   1.440167
+improvement_surcharge  7555473.0                    0.299986                  0.0                  0.3                  0.3                  0.3                  0.6   0.002088
+total_amount           7555473.0                   15.420062                 0.31                  8.3                 11.3                16.56               795.05   13.24563
+congestion_surcharge   7555473.0                     0.00001                  0.0                  0.0                  0.0                  0.0                  2.5   0.005064
+
+ Log saved to C:\Users\MWEEENE\OneDrive\Documents\ENTERPRISE WEB DEV SUMMATIVE\Urban_Mobility_Data_Explorer\logs\excluding_records.csv
