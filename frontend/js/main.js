@@ -11,7 +11,7 @@ const state = {
     totalPages: 1,
 };
 
-// short way to find an element by its i
+// short way to find an element by its id
 const $ = (id) => document.getElementById(id);
 
 // ---formatting helpers----

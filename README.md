@@ -12,3 +12,5 @@ python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 put files in data set in `data/raw/` 
+
+link to team task sheet - https://docs.google.com/spreadsheets/d/1I0N5eUctzWSUkwSLzQiU75zSHnxQZl7PzwDWK2OGUro/edit?usp=sharing
